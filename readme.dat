@@ -1,0 +1,11 @@
+Для установки:
+- прописать доступ к базе данных в конфигурационном файле \protected\config\main.php в строке 
+			//сервер базы дыннх (localhost) и имя базы данных (db_name)
+			'connectionString' => 'mysql:host=localhost;dbname=db_name',
+			.....
+			//имя и пароль для пользователя БД
+			'username' => 'root',
+			'password' => '',
+			
+- установить права на запись для папки "assets"
+- установить права на запись для папки "img\news"

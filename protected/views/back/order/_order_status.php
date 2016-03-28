@@ -1,0 +1,1 @@
+<span class="<?php echo $data->getStatusStyle()?>"><?php echo $data->getStatusName()?></span>

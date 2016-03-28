@@ -1,0 +1,118 @@
+@charset "utf-8";
+/* CSS Document */
+*{
+	margin:0px;
+	padding:0px;
+}
+img{
+	border:0px;
+}
+html, body{
+	padding:0px;
+	margin:0px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+}
+html{
+	background-color:#103157;
+}
+body{
+	width:997px;
+	margin:0 auto;
+}
+#site{
+	width:997px;
+}
+#header{
+	height:38px;
+	padding:27px 0 29px 0;
+	position:relative;
+}
+#header a{
+	display:block;
+	float:left;
+}
+#header span{
+	display:block;
+	float:left;
+	line-height:38px;
+	color:#6E92B8;
+	padding:0 0 0 28px;
+}
+#header .bookmark{
+	position:absolute;
+	top:67px;
+	right:0px;
+}
+#content{
+	background-color:#FFFFFF;
+	overflow:hidden;
+}
+#content .prize img{
+	float:left
+}
+#content .prize p{
+	display:block;
+	float:left;
+	width:705px;
+	padding:10px 0 0 0;
+}
+#content .social{
+	width:400px;
+	float:right;
+	margin:20px 45px 0 0;
+	height:100px;
+}
+#content .social div{
+	display:block;
+	float:left;
+	margin:0 13px 0 0;
+}
+#sites{
+	width:990px;
+	float:left;
+	overflow:hidden;
+	padding:0 0 0 14px;
+}
+#sites .site{
+	width:240px;
+	background:url(images/site_bg.gif) top left repeat-y;
+	float:left;
+	margin:0 5px 8px 0;
+}
+#sites td{
+	width:240px;
+}
+.site div{
+	padding:22px 0 23px 40px;
+}
+.site div h5{
+	display:block;
+	width:154px;
+	text-align:center;
+	font-size:14px;
+	color:#000000;
+	font-size:bold;
+	padding:15px 0 4px 0;
+}
+.site div span{
+	font-size:11px;
+	color:#7C90A0;
+	display:block;
+	width:154px;
+	text-align:center;
+}
+.site div ul{
+	list-style-type:none;
+	margin:17px 0 20px 0;
+	font-size:12px;
+	line-height:17px;
+	width:180px;
+}
+#footer{
+	background-color:#DEECFB;
+	font-size:12px;
+	color:#5C7793;
+	text-align:center;
+	padding:12px 0 9px 0;
+}

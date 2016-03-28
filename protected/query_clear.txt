@@ -1,0 +1,11 @@
+DELETE FROM `order`;
+DELETE FROM `order_to_product`;
+UPDATE `product` SET orders = 0;
+UPDATE `user` SET orders_num  = 0, websites_num = 0;
+UPDATE product_category  SET `sale_num` =0,coefficient=0 ;
+
+DELETE FROM user;
+DELETE FROM user_billing;
+
+DELETE FROM `post`;
+DELETE FROM `post_to_category`;
