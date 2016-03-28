@@ -17,7 +17,8 @@ class Bitcoin extends CPayment
         $fh = fopen($this->_logFileName, 'a+');
         fwrite($fh, date('d-m-Y H:i') . ' : ' . $string . "\n");
         fclose($fh);
-        exit;
+        exit(111);
+        //asdf asdf
     }
     
     protected function confirm($params)
