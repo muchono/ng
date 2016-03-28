@@ -9,6 +9,7 @@ class Bitcoin extends CPayment
                 
         //$this->_params['clientId'],
         //$this->_params['clientSecret']
+        //test
     }
     
     public function addLog($string)
@@ -16,6 +17,7 @@ class Bitcoin extends CPayment
         $fh = fopen($this->_logFileName, 'a+');
         fwrite($fh, date('d-m-Y H:i') . ' : ' . $string . "\n");
         fclose($fh);
+        exit;
     }
     
     protected function confirm($params)
