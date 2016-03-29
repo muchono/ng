@@ -5,7 +5,7 @@ Yii::setPathOfAlias('Zend',Yii::getPathOfAlias('application.vendors.Zend'));
 class BuyPublicationController extends Controller
 {
     const PDF_INVOICE_DIR = 'content/pdf/';
-    protected $_payments = array('PayPal', 'Webmoney', 'TwocheckoutPayment');
+    protected $_payments = array('PayPal', 'Webmoney', 'TwocheckoutPayment', 'Bitcoin');
     
     public $defaultAction = 'ChooseResource';
     public function filters()

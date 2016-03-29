@@ -1805,7 +1805,7 @@ header {
   width: 320px; }
 .choose-payment .main .logo {
   padding: 26px; }
-  .choose-payment .main .logo .pp, .choose-payment .main .logo .card, .choose-payment .main .logo .wm {
+  .choose-payment .main .logo .pp, .choose-payment .main .logo .card, .choose-payment .main .logo .wm , .choose-payment .main .logo .bt {
     width: 213px;
     height: 67px; }
   .choose-payment .main .logo .pp {
@@ -1814,12 +1814,16 @@ header {
     background: url(../img/pay-card.png) no-repeat left top; }
   .choose-payment .main .logo .wm {
     background: url(../img/pay-wm.png) no-repeat left top; }
+  .choose-payment .main .logo .bt {
+    background: url(../img/pay-bt.png) no-repeat left top; }
 .choose-payment .main .logo.active .pp {
   background: url(../img/pay-pp-act.png) no-repeat left top; }
 .choose-payment .main .logo.active .card {
   background: url(../img/pay-card-act.png) no-repeat left top; }
 .choose-payment .main .logo.active .wm {
   background: url(../img/pay-wm-act.png) no-repeat left top; }
+.choose-payment .main .logo.active .bt {
+  background: url(../img/pay-bt-act.png) no-repeat left top; }
 .choose-payment .main .radio-check {
   padding: 30px 55px; }
 .choose-payment .main .order-info {

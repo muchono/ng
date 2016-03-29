@@ -69,7 +69,7 @@ return array(
 		),*/
 		// uncomment the following to use a MySQL database
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=ng',
+			'connectionString' => 'mysql:host=localhost;dbname=netger',
 			'emulatePrepare' => true,
 			'username' => 'root',
 			'password' => '',

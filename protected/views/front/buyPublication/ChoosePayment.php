@@ -90,6 +90,18 @@
 												</div>
 											</td>
 										</tr>
+										<tr>
+											<td class="logo-cell">
+												<div class="logo <?php echo ($user_billing->payment == 'Bitcoin' ? 'active' : '')?>">
+													<div class="bt"></div>
+												</div>
+											</td>
+											<td class="radio-cell">
+												<div class="radio-check">
+                                                    <input type="radio" id="btp" name="UserBilling[payment]" value="Bitcoin"<?php echo ($user_billing->payment == 'Bitcoin' ? 'checked' : '')?>>
+												</div>
+											</td>
+										</tr>                                        
 									</table>
 								</div>
 							</div>
@@ -205,12 +217,20 @@
 				</div>
             <?php $this->endWidget(); ?>
 			</section>
+
 <?php
     Yii::app()->clientScript->registerScript('choose_payment_script',"
+    $('.iradio input').on('ifChecked', function(event){
+        if (typeof window[$(this).val()] != 'undefined'){
+            window[$(this).val()].init();
+        }
+    });
+    
     $('.butt.accept').click(function(e){
         e.preventDefault();
         $('#choose-pyment-form').submit();
     });
+
     
     ",CClientScript::POS_READY);
 ?>
