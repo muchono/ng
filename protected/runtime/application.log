@@ -12023,3 +12023,27 @@ Stack trace:
 #7 {main}
 REQUEST_URI=/wp-login.php
 ---
+2016/03/28 09:21:16 [error] [exception.CDbException] SQLSTATE[HY000] [1044] Access denied for user ''@'localhost' to database 'netger'
+2016/03/28 09:21:16 [error] [exception.CDbException] exception 'CDbException' with message 'CDbConnection failed to open the DB connection.' in Z:\home\netgeron.com\www\framework\db\CDbConnection.php:387
+Stack trace:
+#0 Z:\home\netgeron.com\www\framework\db\CDbConnection.php(330): CDbConnection->open()
+#1 Z:\home\netgeron.com\www\framework\db\CDbConnection.php(308): CDbConnection->setActive(true)
+#2 Z:\home\netgeron.com\www\framework\base\CModule.php(387): CDbConnection->init()
+#3 Z:\home\netgeron.com\www\framework\base\CApplication.php(438): CModule->getComponent('db')
+#4 Z:\home\netgeron.com\www\framework\db\ar\CActiveRecord.php(623): CApplication->getDb()
+#5 Z:\home\netgeron.com\www\framework\db\ar\CActiveRecord.php(2309): CActiveRecord->getDbConnection()
+#6 Z:\home\netgeron.com\www\framework\db\ar\CActiveRecord.php(387): CActiveRecordMetaData->__construct(Object(Post))
+#7 Z:\home\netgeron.com\www\protected\models\Post.php(60): CActiveRecord::model('Post')
+#8 Z:\home\netgeron.com\www\protected\components\BlogUrlRule.php(14): Post::model()
+#9 Z:\home\netgeron.com\www\framework\web\CUrlManager.php(367): BlogUrlRule->parseUrl(Object(CUrlManager), Object(CHttpRequest), 'buyPublication/...', 'buyPublication/...')
+#10 Z:\home\netgeron.com\www\framework\web\CWebApplication.php(140): CUrlManager->parseUrl(Object(CHttpRequest))
+#11 Z:\home\netgeron.com\www\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#12 Z:\home\netgeron.com\www\protected\components\WebApplicationEndBehavior.php(25): CApplication->run()
+#13 [internal function]: WebApplicationEndBehavior->runEnd('front')
+#14 Z:\home\netgeron.com\www\framework\base\CComponent.php(260): call_user_func_array(Array, Array)
+#15 Z:\home\netgeron.com\www\index.php(13): CComponent->__call('runEnd', Array)
+#16 Z:\home\netgeron.com\www\index.php(13): CWebApplication->runEnd('front')
+#17 {main}
+REQUEST_URI=/buyPublication/SubmitDetails
+HTTP_REFERER=http://www.netgeron.com/buyPublication/ChooseResource
+---
