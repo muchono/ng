@@ -98,7 +98,7 @@
 											</td>
 											<td class="radio-cell">
 												<div class="radio-check">
-                                                    <input type="radio" id="btp" name="UserBilling[payment]" value="Bitcoin"<?php echo ($user_billing->payment == 'Bitcoin' ? 'checked' : '')?>>
+                                                    <input type="radio" name="UserBilling[payment]" value="Bitcoin"<?php echo ($user_billing->payment == 'Bitcoin' ? 'checked' : '')?>>
 												</div>
 											</td>
 										</tr>                                        
@@ -172,7 +172,11 @@
 												<span class="total right">Total:</span>
 											</td>
 											<td>
-											<div class="price">$<?php echo $cart_info['total']?></div>
+                                                <?php foreach ($payments as $n=>$v) {?>
+    											<div class="price <?php echo $n?> hide">
+                                                <?php echo $v->getSymbol()?><?php echo $v->exchange($cart_info['total'])?>
+                                                </div>                                                
+                                                <?php }?>                                                
 											</td>
 										</tr>
 									</tfoot>
@@ -194,7 +198,9 @@
 												</ul>
 											</td>
 											<td class="three">
-												<div class="price">$<?php echo $item->product->price?></div>
+                                                <?php foreach ($payments as $n=>$v) {?>
+												<div class="price <?php echo $n?> hide"><?php echo $v->getSymbol()?><?php echo $v->exchange($item->product->price)?></div>
+                                                <?php }?>
 											</td>
 										</tr>
                                         <?php }?>
@@ -217,18 +223,27 @@
 				</div>
             <?php $this->endWidget(); ?>
 			</section>
+            <?php foreach ($payments as $n=>$v) {
+                $v->includeHTML($cart_info);
+            }?>
 
 <?php
     Yii::app()->clientScript->registerScript('choose_payment_script',"
+    $('.price.PayPal').removeClass('hide');
     $('.iradio input').on('ifChecked', function(event){
-        if (typeof window[$(this).val()] != 'undefined'){
-            window[$(this).val()].init();
-        }
+        $('.price').addClass('hide');
+        $('.price.'+$(this).val()).removeClass('hide');
     });
     
     $('.butt.accept').click(function(e){
         e.preventDefault();
-        $('#choose-pyment-form').submit();
+        var paymentName = $(\"input[name='UserBilling[payment]']:checked\").val() + 'Payment';
+        if (typeof window[paymentName] != 'undefined'){
+            var paymentObject = new window[paymentName]();
+            paymentObject.submit();
+        } else {
+            $('#choose-pyment-form').submit();
+        }
     });
 
     

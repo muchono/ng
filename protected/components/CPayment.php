@@ -17,12 +17,58 @@ class CPayment extends CComponent
     protected $_params;
     protected $_payment_details = null;
     protected $_logFileName = '';
-    
+    protected $_currency = 'USD';
+    protected $_exchangeRate = 0;
+    protected $_symbol = '$';
+
+
     public function __construct()
     {
         $this->_logFileName = Yii::getPathOfAlias('application.log') . '/'.  get_class($this).'.log';
+        $this->_exchangeRate = $this->_defineRate();
     }
-   
+    
+    /**
+     * Exchange money
+     * @param float $summ
+     * @return float
+     */
+    public function exchange($summ)
+    {
+        return round($summ/$this->_exchangeRate, 2);
+    }
+    
+    public function getCurrency()
+    {
+        return $this->_currency;
+    }
+    
+    public function getSymbol()
+    {
+        return $this->_symbol;
+    }
+    
+    /**
+     * Get exchange rate
+     * @return mixed
+     */
+    public function getRate()
+    {
+        $this->_exchangeRate;
+    }
+    
+    public function includeHTML()
+    {
+        
+    }    
+    
+    protected function _defineRate()
+    {
+        return 1;
+    }
+    
+
+
     public function perform($params = array())
     {
         $this->beforePay();

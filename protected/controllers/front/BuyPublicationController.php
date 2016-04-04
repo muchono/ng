@@ -86,6 +86,26 @@ class BuyPublicationController extends Controller
 	}
     
     
+    public function actionPaymentCheck()
+    {
+        $r = array('result'=>0);
+        if (!empty($_POST['payment']) && in_array($_POST['payment'], array_keys(Yii::app()->params->payments))) {
+            Yii::import('application.extensions.'.$_POST['payment'].'.'.$_POST['payment']);
+            $payment = new $_POST['payment']();
+            $payment->setParams(Yii::app()->params->payments[$_POST['payment']]);
+            $payments = $payment->getPayments(Yii::app()->user->profile->id);
+            $cart_info = Cart::getByUser(Yii::app()->user->profile->id);
+            $to_pay = $payment->exchange($cart_info['total']);
+            $r['to_pay'] = $to_pay;
+            if ($to_pay <= $payments['total_not_used']) {
+                $r['result'] = 1;
+            } else {
+                $r['message'] = "Confirmed sum: ".$payment->getSymbol().($payments['total_not_used'] ? $payments['total_not_used'] : 0);
+            }
+        }
+        exit(json_encode($r));
+    }
+    
     public function actionPaymentPreResult()
     {
         if (!empty($_GET['payment']) && in_array($_GET['payment'], array_keys(Yii::app()->params->payments))) {
@@ -214,9 +234,24 @@ class BuyPublicationController extends Controller
             $user_billing->agreed = 0;
         }
         
+        $currencies = array();
+        $payments = array();
+        foreach ($this->_payments as $key => $value) {
+            Yii::import('application.extensions.'.$value.'.'.$value);
+            $payments[$value] = new $value();
+            if (file_exists(Yii::app()->baseUrl.'js/'.$value.'Payment.js')) {
+                Yii::app()->clientScript
+                          ->registerScriptFile(Yii::app()->baseUrl.'/js/'.$value.'Payment.js',
+                                               CClientScript::POS_END);
+            }
+            
+        }
+        
+
     	$this->render('ChoosePayment',array(
             'cart_info' => $cart_info,
             'user_billing' => $user_billing,
+            'payments' => $payments,
         ));
     }
     

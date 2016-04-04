@@ -1,12 +1,19 @@
 <?php
+Yii::import('application.extensions.Curl.Curl');
+
 class Bitcoin extends CPayment
 {
+    const CONFIRMATION_AMOUNT = 6;
+    protected $_dbTables = array('payment' => 'bitcoin_payment', 'address' => 'bitcoin_address');
     protected $_action_url = 'https://api.blockchain.info/v2/receive?xpub=%s&callback=$s&key=%s';
-   
+    protected $_exchangeURL = 'https://blockchain.info/ticker';
+    protected $_currency = 'BTC';
+    protected $_symbol = '฿';    
+
     public function init()
     {
         $this->_action_url = '';
-                
+            
         //$this->_params['clientId'],
         //$this->_params['clientSecret']
         //test
@@ -17,30 +24,40 @@ class Bitcoin extends CPayment
         $fh = fopen($this->_logFileName, 'a+');
         fwrite($fh, date('d-m-Y H:i') . ' : ' . $string . "\n");
         fclose($fh);
-        exit(111);
-        //asdf asdf
     }
     
     protected function confirm($params)
     {
-        $r = 0;
-        $this->addLog('Transaction confirmation request');
-        if (!empty($params['LMI_PAYMENT_NO'])){
-            $transaction = Transaction::model()->findByPk($params['LMI_PAYMENT_NO']);
-            if (!empty($transaction)){
-                $this->setID($transaction->id);
-                $this->_payment_result = $transaction->success;
-                $this->_payment_details = $params;
-                if (!empty($params['RND'])
-                    && md5($transaction->time) == $params['RND']
-                    && $transaction->success) {
-                    $r = 1;
-                    $this->addLog('Transaction success confirmed, payment_no: ' .$params['LMI_PAYMENT_NO']);
-                }else $this->addLog('Transaction confirmation error, payment_no: ' .$params['LMI_PAYMENT_NO']);
-            }else $this->addLog('Transaction not found for confirmation, payment_no: ' .$params['LMI_PAYMENT_NO']);
+        $user_id = Yii::app()->user->profile->id;
+        $payments = $this->getPayments($user_id);
+        $cart_info = Cart::getByUser($user_id);
+        $to_pay = $this->exchange($cart_info['total']);
+
+        $this->addLog('Transaction confirmation start User: '.$user_id.' (' . $to_pay . "<=" .$payments['total_not_used'] .')');
+
+        $r = $to_pay <= $payments['total_not_used'] ? 1 : 0;
+        //mark payments used
+        if ($r) {
+            $address = $this->getAddress($user_id);
+            Yii::app()->db->createCommand('UPDATE '.$this->_dbTables['payment'].' SET used=1 WHERE `address`="'.$address.'"')
+                      ->execute();
+
+            $this->addLog('Confirmed User: '.$user_id.' ('.$address.')');
+        } else {
+            $this->addLog('Transaction fail');
         }
-        
+
         return $r;
+    }
+    
+    /**
+     * Exchange money
+     * @param float $summ
+     * @return float
+     */
+    public function exchange($summ)
+    {
+        return round($summ/$this->_exchangeRate, 3);
     }
     
     public function exitByError($string, $step, $id) 
@@ -48,60 +65,80 @@ class Bitcoin extends CPayment
         $this->addLog($string . ", step: $step, payment_no: ". $id);
         Yii::app()->end();
     }
-
     
-    public function result($params = array())
+    
+    /**
+     * Get address for user
+     * @param integer $user_id User ID
+     * @return string Address
+     */
+    public function getAddress($user_id)
     {
-        $transaction = null;
-        $this->addLog('Transaction prerequest triger');
-        
-        if (isset($params['LMI_PAYMENT_NO'])){
-            $transaction = Transaction::model()->findByPk($params['LMI_PAYMENT_NO']);
+        $address = Yii::app()->db->createCommand()
+                             ->select('address')
+                             ->from($this->_dbTables['address'])
+                             ->where('user_id=:user_id', array(':user_id' => $user_id))
+                             ->queryScalar();
+        if (empty($address)) {
+            $address = $this->generateAddressFor($user_id);
         }
-
-        if(empty($transaction)) {
-            $this->exitByError('Transaction not found', 1, isset($params['LMI_PAYMENT_NO']) ? $params['LMI_PAYMENT_NO'] : 0 );
-        }
-        
-        if(!isset($params['RND']) || md5($transaction->time) != $params['RND']) {
-            $this->exitByError('Transaction not valid', 2, $params['LMI_PAYMENT_NO']);
-        }       
-        
-        $this->_payment_details = $params;
-        $this->setID($transaction->id);        
-        if(isset($params['LMI_PREREQUEST']) && $params['LMI_PREREQUEST'] == 1){ # Prerequest
-            $this->saveSate();
-            $this->addLog('Transaction prerequest, payment_no: '.$transaction->id);
-            echo 'YES';
-        }else{
-            # Create check string
-            $chkstring =  $this->_params['wmz'].number_format($transaction->price, 2, '.', '').$transaction->id.
-                          $params['LMI_MODE'].$params['LMI_SYS_INVS_NO'].$params['LMI_SYS_TRANS_NO'].$params['LMI_SYS_TRANS_DATE'].
-                          $this->_params['secretKey'].$params['LMI_PAYER_PURSE'].$params['LMI_PAYER_WM'];
-            $sha256 = strtoupper(hash('sha256', $chkstring));
-            $hash_check = ($params['LMI_HASH'] == $sha256);
-            
-            if($hash_check){
-                $this->_payment_result = 1;
-                $this->saveSate();
-            } else {
-                $this->saveSate();
-                $this->exitByError('Transaction check error', 3, $params['LMI_PAYMENT_NO'].' '. $chkstring.' '.$sha256);
-            }
-        }
-        
-        Yii::app()->end;
+        return $address;
     }
     
-    protected function pay($params)
+    /**
+     * Generate address for user
+     * @param integer $user_id
+     * @return string Address
+     */
+    public function generateAddressFor($user_id)
     {
-        echo $this->getHTML();
-        Yii::app()->end();
+        $address = 'a'.time();
+        Yii::app()->db->createCommand()
+                      ->insert($this->_dbTables['address'], array('address'=>$address, 'user_id'=>$user_id));
+        return $address;
     }
     
-    public function getHTML()
+    /**
+     * Get payments
+     * @param integer $user_id User ID
+     * @return array 
+     */
+    public function getPayments($user_id)
     {
-
+        $address = $this->getAddress($user_id);
+        $info = Yii::app()->db->createCommand('SELECT (SELECT FORMAT(SUM(total), 5) FROM '.$this->_dbTables['payment'].' WHERE address="'.$address.'") total,
+                                       (SELECT FORMAT(SUM(total), 5) FROM '.$this->_dbTables['payment'].' WHERE address="'.$address.'" AND used = 0 AND confirmation_amount >= ' . self::CONFIRMATION_AMOUNT . ') total_not_used')
+                              ->queryRow(true);
+        
+        $info['payments'] = Yii::app()->db->createCommand()
+                ->select('*')
+                ->from($this->_dbTables['payment'])
+                ->where('address=:address', array(':address'=>$address))
+                ->queryAll(true);
+        
+        return $info;
     }
+
+    public function includeHTML($data = array())
+    {
+        $path = Yii::getPathOfAlias('application.extensions.Bitcoin.views.modal');
+        include_once($path .'.php');
+    }
+    
+    /**
+     * Define exchange rate
+     * @return mixed
+     */
+    protected function _defineRate()
+    {
+        $curl = new Curl();
+
+        $agent= 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
+        $rates = json_decode($curl->setOption(CURLOPT_SSL_VERIFYPEER, false)
+             ->setOption(CURLOPT_USERAGENT, $agent)
+             ->get($this->_exchangeURL), 1);
+
+        return $rates["USD"]['last'];
+    }    
  
 }
