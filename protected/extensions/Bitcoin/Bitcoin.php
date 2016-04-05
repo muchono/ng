@@ -4,6 +4,7 @@ Yii::import('application.extensions.Curl.Curl');
 class Bitcoin extends CPayment
 {
     const CONFIRMATION_AMOUNT = 6;
+    const SECURE_STR = 'ch236DDssf2sedjc';
     protected $_dbTables = array('payment' => 'bitcoin_payment', 'address' => 'bitcoin_address');
     protected $_action_url = 'https://api.blockchain.info/v2/receive?xpub=%s&callback=$s&key=%s';
     protected $_exchangeURL = 'https://blockchain.info/ticker';
@@ -85,6 +86,16 @@ class Bitcoin extends CPayment
         return $address;
     }
     
+    public function getPaymentByAddress($address)
+    {
+        return Yii::app()->db->createCommand()
+                             ->select('*')
+                             ->from($this->_dbTables['payment'])
+                             ->where('user_id=:user_id', array(':user_id' => $user_id))
+                             ->queryScalar();        
+    }
+    
+    
     /**
      * Generate address for user
      * @param integer $user_id
@@ -126,6 +137,32 @@ class Bitcoin extends CPayment
     }
     
     /**
+     * Add the payment
+     * @param array $param
+     */
+    public function result($param = array())
+    {
+        $this->addLog('Bitcoin Daemon:' . json_encode($param));
+        if ($param['confirmations'] >= 6) {
+            /////!!!!!!!!!!!!
+            if ($param['secure'] == self::SECURE_STR) {
+                $data = array(
+                    'total'            => $param['value'] / 100000000,
+                    'address'          => $param['address'],
+                    'transaction_hash' => $param['transaction_hash'],
+                    'confirmation_amount' => $param['confirmations'],
+                );
+                Yii::app()->db->createCommand()
+                          ->insert($this->_dbTables['payment'], $data);
+                $this->addLog('Response *ok*');
+                echo '*ok*';
+            } else {
+                $this->addLog('Secure ERROR');
+            }
+        }
+    }
+    
+    /**
      * Define exchange rate
      * @return mixed
      */
@@ -139,6 +176,5 @@ class Bitcoin extends CPayment
              ->get($this->_exchangeURL), 1);
 
         return $rates["USD"]['last'];
-    }    
- 
+    }
 }
