@@ -186,6 +186,18 @@ class Bitcoin extends CPayment
     }
     
     /**
+     * Register css, JS or other sources
+     */    
+    public function registerClientScripts()
+    {
+        Yii::app()->clientScript
+                  ->registerScriptFile(Yii::app()->baseUrl.'/js/BitcoinPayment.js',
+                                       CClientScript::POS_END);
+        Yii::app()->clientScript
+                  ->registerCssFile(Yii::app()->baseUrl.'/css/bitcoin_modal.css');             
+    }  
+    
+    /**
      * Define exchange rate
      * @return mixed
      */

@@ -100,7 +100,7 @@ class BuyPublicationController extends Controller
             if ($to_pay <= $payments['total_not_used']) {
                 $r['result'] = 1;
             } else {
-                $r['message'] = "Confirmed sum: ".$payment->getSymbol().($payments['total_not_used'] ? $payments['total_not_used'] : 0);
+                $r['message'] = "Confirmed sum: ".($payments['total_not_used'] ? $payments['total_not_used'] : 0) . ' BTC';
             }
         }
         exit(json_encode($r));
@@ -240,12 +240,7 @@ class BuyPublicationController extends Controller
             Yii::import('application.extensions.'.$value.'.'.$value);
             $payments[$value] = new $value();
             $payments[$value]->setParams(Yii::app()->params->payments[$value]);
-            if (file_exists(Yii::app()->baseUrl.'js/'.$value.'Payment.js')) {
-                Yii::app()->clientScript
-                          ->registerScriptFile(Yii::app()->baseUrl.'/js/'.$value.'Payment.js',
-                                               CClientScript::POS_END);
-            }
-            
+            $payments[$value]->registerClientScripts();
         }
         
 

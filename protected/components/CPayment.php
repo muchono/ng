@@ -128,6 +128,14 @@ class CPayment extends CComponent
         return $this->_payment_details;
     }
     
+    /**
+     * Register css, JS or other sources
+     */
+    public function registerClientScripts()
+    {
+        
+    }
+    
     protected function afterPay()
     {
         
