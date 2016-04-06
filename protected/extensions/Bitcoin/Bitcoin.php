@@ -11,15 +11,6 @@ class Bitcoin extends CPayment
     protected $_currency = 'BTC';
     protected $_symbol = '฿';    
 
-    public function init()
-    {
-        $this->_action_url = '';
-            
-        //$this->_params['clientId'],
-        //$this->_params['clientSecret']
-        //test
-    }
-    
     public function addLog($string)
     {
         $fh = fopen($this->_logFileName, 'a+');
@@ -103,9 +94,26 @@ class Bitcoin extends CPayment
      */
     public function generateAddressFor($user_id)
     {
-        $address = 'a'.time();
-        Yii::app()->db->createCommand()
-                      ->insert($this->_dbTables['address'], array('address'=>$address, 'user_id'=>$user_id));
+        $callback_url = Yii::app()->getBaseUrl(true).'/buyPublication/PaymentPreResult?payment=Bitcoin&user_id='.$user_id.'&secure='.$this->getSecure($user_id);
+        $url = 'https://api.blockchain.info/v2/receive?xpub='.$this->_params['xpub'].'&callback='.urlencode($callback_url).'&key='.$this->_params['key'];
+        
+        $this->addLog('Generate address for ' . $user_id . ' ' . $url);
+        
+        $curl = new Curl();
+        $agent= 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
+        $res = $curl->setOption(CURLOPT_SSL_VERIFYPEER, false)
+                    ->setOption(CURLOPT_USERAGENT, $agent)
+                    ->get($url);
+        
+        $this->addLog('Generate address ressult ' . $res);
+        $res_array = json_decode($res, 1);
+        $address = '';
+        if (!empty($res_array['address'])) {
+            $address = $res_array['address'];
+            Yii::app()->db->createCommand()
+              ->insert($this->_dbTables['address'], array('address'=>$res_array['address'], 'user_id'=>$user_id));
+        }
+
         return $address;
     }
     
@@ -143,14 +151,17 @@ class Bitcoin extends CPayment
     public function result($param = array())
     {
         $this->addLog('Bitcoin Daemon:' . json_encode($param));
-        if ($param['confirmations'] >= 6) {
-            /////!!!!!!!!!!!!
-            if ($param['secure'] == self::SECURE_STR) {
+        if (empty($param['user_id'])) {
+            $this->addLog('Empty user');
+        } elseif (!empty($param['confirmations']) 
+                && $param['confirmations'] >= self::CONFIRMATION_AMOUNT) {
+            if ($param['secure'] == $this->getSecure($param['user_id'])) {
                 $data = array(
                     'total'            => $param['value'] / 100000000,
                     'address'          => $param['address'],
                     'transaction_hash' => $param['transaction_hash'],
                     'confirmation_amount' => $param['confirmations'],
+                    'datetime'         => new CDbExpression('NOW()'),
                 );
                 Yii::app()->db->createCommand()
                           ->insert($this->_dbTables['payment'], $data);
@@ -159,7 +170,19 @@ class Bitcoin extends CPayment
             } else {
                 $this->addLog('Secure ERROR');
             }
+        } else {
+            $this->addLog('Confirmations: '. (empty($param['confirmations']) ? 0 : (int) $param['confirmations']));
         }
+    }
+    
+    /**
+     * Generate secure string
+     * @param string $str Base string 
+     * @return string Hash
+     */
+    public function getSecure($str)
+    {
+        return sha1($str.self::SECURE_STR);
     }
     
     /**

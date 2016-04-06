@@ -239,6 +239,7 @@ class BuyPublicationController extends Controller
         foreach ($this->_payments as $key => $value) {
             Yii::import('application.extensions.'.$value.'.'.$value);
             $payments[$value] = new $value();
+            $payments[$value]->setParams(Yii::app()->params->payments[$value]);
             if (file_exists(Yii::app()->baseUrl.'js/'.$value.'Payment.js')) {
                 Yii::app()->clientScript
                           ->registerScriptFile(Yii::app()->baseUrl.'/js/'.$value.'Payment.js',

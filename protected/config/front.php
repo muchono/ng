@@ -82,8 +82,8 @@ return CMap::mergeArray(
                     //4000000000000002 sandbox: netger, pwd: usual + 1
                 ),
                 'Bitcoin' => array(
-                    'xpub' => 'xpub',
-                    'key' => '901265259',
+                    'xpub' => 'xpub6Caz8swg4xj55VoQ2AFuAWihynG5FgSBiVQxyWE2LVoaKSGUM3JwEZXvpXAhsdSoahkZJQYNJvQVWQdXAX1Hfd2Tom6XUDqGo7c8wDvA4GX',
+                    'key'  => 'a3245363-9f00-424f-b1f6-f98116b50280',
                 ),
             ),
         ),

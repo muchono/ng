@@ -210,7 +210,7 @@
 							<div class="terms text-center">
                                 <?php echo $form->checkBox($user_billing, 'agreed')?>      
                                 <span>I have read and agree to the <a href="<?php echo $this->createURL('front/terms'); ?>" target="_blank">Terms of Use</a></span>
-                                <div class="error-message"><?php echo $form->error($user_billing, 'agreed'); ?></div>
+                                <div class="error-message error-message-agreed"><?php echo $form->error($user_billing, 'agreed'); ?></div>
 							</div>
 							<div class="button">
                                 <a href="<?php echo $this->createUrl('BuyPublication/SubmitDetails');?>" class="butt back">Back</a>
@@ -237,12 +237,17 @@
     
     $('.butt.accept').click(function(e){
         e.preventDefault();
-        var paymentName = $(\"input[name='UserBilling[payment]']:checked\").val() + 'Payment';
-        if (typeof window[paymentName] != 'undefined'){
-            var paymentObject = new window[paymentName]();
-            paymentObject.submit();
+        $('.error-message-agreed').html('');
+        if (!$('input[name=\"UserBilling[agreed]\"]').is(':checked')) {
+            $('.error-message-agreed').html('Please read Terms of Use');
         } else {
-            $('#choose-pyment-form').submit();
+            var paymentName = $(\"input[name='UserBilling[payment]']:checked\").val() + 'Payment';
+            if (typeof window[paymentName] != 'undefined'){
+                var paymentObject = new window[paymentName]();
+                paymentObject.submit();
+            } else {
+                $('#choose-pyment-form').submit();
+            }
         }
     });
 
