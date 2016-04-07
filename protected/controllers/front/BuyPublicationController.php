@@ -210,6 +210,8 @@ class BuyPublicationController extends Controller
             $user_billing->user_id = Yii::app()->user->profile->id;
             $user_billing->payment = 'PayPal';
         }
+        
+        $this->performAjaxValidation($user_billing);
         if (!empty($_POST['UserBilling'])) {
             $user_billing->attributes = $_POST['UserBilling'];
             if ($user_billing->validate()) {
@@ -361,14 +363,11 @@ class BuyPublicationController extends Controller
         ));        
     }
 
-	protected function performAjaxValidation(array $cart_items)
+	protected function performAjaxValidation($user_billing)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='cart-form')
+		if(isset($_GET['ajax']) && $_GET['ajax']==='choose-pyment-form')
 		{
-            foreach ($cart_items as $key => $value) {
-                $cart_items[$key]->scenario = 'SubmitDetails';
-            }
-			echo CActiveForm::validate($cart_items);
+			echo CActiveForm::validate($user_billing);
 			Yii::app()->end();
 		}
 	}

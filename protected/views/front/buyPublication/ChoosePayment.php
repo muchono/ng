@@ -238,20 +238,34 @@
     var payments=[];
     $('#acceptButton').click(function(e){
         e.preventDefault();
-        $('.error-message-agreed').html('');
-        if (!$('input[name=\"UserBilling[agreed]\"]').is(':checked')) {
-            $('.error-message-agreed').html('Please read Terms of Use');
-        } else {
-            var paymentName = $(\"input[name='UserBilling[payment]']:checked\").val() + 'Payment';
-            if (typeof window[paymentName] != 'undefined'){
-                if (typeof payments[paymentName] == 'undefined') {
-                    payments[paymentName] = new window[paymentName]();
+        $('.error-message').text('');
+        $.ajax({
+          type: 'POST',
+          url: '/buyPublication/ChoosePayment?ajax=choose-pyment-form',
+          method: 'POST',
+          data: $('#choose-pyment-form').serialize(),
+          dataType: 'json'
+        }).done(function(res) {
+            if (!jQuery.isEmptyObject(res)){
+                $.each(res, function(key, val) {
+                    if (key == 'UserBilling_agreed'){
+                        $('.error-message-agreed').text(val);
+                    } else {
+                        $('#'+key).next('.error-message').text(val);
+                    }
+                });
+            }else{
+                var paymentName = $(\"input[name='UserBilling[payment]']:checked\").val() + 'Payment';
+                if (typeof window[paymentName] != 'undefined'){
+                    if (typeof payments[paymentName] == 'undefined') {
+                        payments[paymentName] = new window[paymentName]();
+                    }
+                    payments[paymentName].submit();
+                } else {
+                    $('#choose-pyment-form').submit();
                 }
-                payments[paymentName].submit();
-            } else {
-                $('#choose-pyment-form').submit();
             }
-        }
+        });
     });
 
     
