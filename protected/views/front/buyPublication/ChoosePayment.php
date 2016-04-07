@@ -214,7 +214,7 @@
 							</div>
 							<div class="button">
                                 <a href="<?php echo $this->createUrl('BuyPublication/SubmitDetails');?>" class="butt back">Back</a>
-								<a href="" class="butt accept">accept and Pay</a>
+								<a href="" class="butt accept" id="acceptButton">accept and Pay</a>
 							</div>
 						</div>
 						<!-- OUTPUT BLOCK END -->
@@ -235,7 +235,8 @@
         $('.price.'+$(this).val()).removeClass('hide');
     });
     
-    $('.butt.accept').click(function(e){
+    var payments=[];
+    $('#acceptButton').click(function(e){
         e.preventDefault();
         $('.error-message-agreed').html('');
         if (!$('input[name=\"UserBilling[agreed]\"]').is(':checked')) {
@@ -243,8 +244,10 @@
         } else {
             var paymentName = $(\"input[name='UserBilling[payment]']:checked\").val() + 'Payment';
             if (typeof window[paymentName] != 'undefined'){
-                var paymentObject = new window[paymentName]();
-                paymentObject.submit();
+                if (typeof payments[paymentName] == 'undefined') {
+                    payments[paymentName] = new window[paymentName]();
+                }
+                payments[paymentName].submit();
             } else {
                 $('#choose-pyment-form').submit();
             }

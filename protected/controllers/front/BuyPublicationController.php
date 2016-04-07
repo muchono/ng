@@ -100,7 +100,7 @@ class BuyPublicationController extends Controller
             if ($to_pay <= $payments['total_not_used']) {
                 $r['result'] = 1;
             } else {
-                $r['message'] = "Confirmed sum: ".($payments['total_not_used'] ? $payments['total_not_used'] : 0) . ' BTC';
+                $r['message'] = "Received sum: ".($payments['total_not_used'] ? $payments['total_not_used'] : 0) . ' BTC';
             }
         }
         exit(json_encode($r));
