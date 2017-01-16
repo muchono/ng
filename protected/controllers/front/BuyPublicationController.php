@@ -100,7 +100,8 @@ class BuyPublicationController extends Controller
             if ($to_pay <= $payments['total_not_used']) {
                 $r['result'] = 1;
             } else {
-                $r['message'] = "Received sum: ".($payments['total_not_used'] ? $payments['total_not_used'] : 0) . ' BTC';
+                $r['message'] = "Received sum: ".($payments['total_not_used'] ? $payments['total_not_used'] : 0) . ' BTC<br/>Note: Bitcoin enrollment can take up to 30 minutes.
+<br/>So do not close this window and click on the "Confirm" later.';
             }
         }
         exit(json_encode($r));

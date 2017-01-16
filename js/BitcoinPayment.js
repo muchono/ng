@@ -1,4 +1,6 @@
 var BitcoinPayment = (function() {
+    var intervalID = 0;
+
 	function BitcoinPayment() {
         $('#bitcoinPaid').click(function(e){
             e.preventDefault();
@@ -6,6 +8,7 @@ var BitcoinPayment = (function() {
         });
         $('#bitcoinBack').click(function(e){
             e.preventDefault();
+            clearInterval(intervalID);
             $('.bitcoin_modal_wrap').addClass('hide');
             $(".bitcoin_modal_message").html("&nbsp;")
         });        
@@ -13,6 +16,9 @@ var BitcoinPayment = (function() {
     
 	BitcoinPayment.prototype.submit = function () {
         $('.bitcoin_modal_wrap').removeClass('hide');
+        intervalID = setInterval(function(){ 
+        $.get('/buyPublication/paymentCheck');
+        }, 20000);
 	}
     
     function checkPayment () {
@@ -20,11 +26,11 @@ var BitcoinPayment = (function() {
             'payment': 'Bitcoin'
         }, function(data){
             if (data.result) {
-                location.replace('/buyPublication/PaymentResult?payment=Bitcoin');
+                $('#choose-pyment-form').submit();
             } else {
                 $(".bitcoin_modal_message").html(data.message);
                 $("#bitcoin_modal_price").html(data.to_pay);
-                setTimeout('$(".bitcoin_modal_message").html("&nbsp;")', 3000);
+                setTimeout('$(".bitcoin_modal_message").html("&nbsp;")', 8000);
             }
         }, 'json');
     }

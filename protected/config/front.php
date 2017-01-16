@@ -82,7 +82,7 @@ return CMap::mergeArray(
                     //4000000000000002 sandbox: netger, pwd: usual + 1
                 ),
                 'Bitcoin' => array(
-                    'xpub' => 'xpub6Caz8swg4xj55VoQ2AFuAWihynG5FgSBiVQxyWE2LVoaKSGUM3JwEZXvpXAhsdSoahkZJQYNJvQVWQdXAX1Hfd2Tom6XUDqGo7c8wDvA4GX',
+                    'xpub' => 'xpub6C32LWtGrPom2dAQa4PWyFs9pQ5hxihHDTCN9kgGmfBWmzUnvuC2q9cCFF6tLRSiEMzKf5Hj9z5y1UR3bCvTSD8kyrp9XvZGfFrFncPBS3B',
                     'key'  => 'a3245363-9f00-424f-b1f6-f98116b50280',
                 ),
             ),

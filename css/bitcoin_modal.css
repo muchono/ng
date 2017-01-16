@@ -32,7 +32,7 @@
     height:50px;
     margin-top:34px;
     padding-top:12px;
-    width:496px;
+    width:530px;
 }
 
 .modal_body:before {
@@ -53,10 +53,11 @@
     font-weight: 600;
 }
 
-.bitcoin_modal_message{
+.bitcoin_modal_message {
     color: #3ea13e;
-    font-size: 24px;
+    font-size: 18px;
     font-weight: 600;
+    text-align: left;
 }
 
 a.modal_button_close{
@@ -139,8 +140,7 @@ a.modal_button_close:hover {
     display: none;
 }
 .modal_body.modal_payment_popup {
-    width: 610px;
-    height:450px;
+    width: 650px;
     padding: 90px 60px 60px 60px;
     margin-top: 100px;
 }

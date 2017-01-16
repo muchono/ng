@@ -3,7 +3,7 @@ Yii::import('application.extensions.Curl.Curl');
 
 class Bitcoin extends CPayment
 {
-    const CONFIRMATION_AMOUNT = 6;
+    const CONFIRMATION_AMOUNT = 3;
     const SECURE_STR = 'ch236DDssf2sedjc';
     protected $_dbTables = array('payment' => 'bitcoin_payment', 'address' => 'bitcoin_address');
     protected $_action_url = 'https://api.blockchain.info/v2/receive?xpub=%s&callback=$s&key=%s';
@@ -31,7 +31,7 @@ class Bitcoin extends CPayment
         //mark payments used
         if ($r) {
             $address = $this->getAddress($user_id);
-            Yii::app()->db->createCommand('UPDATE '.$this->_dbTables['payment'].' SET used=1 WHERE `address`="'.$address.'"')
+            Yii::app()->db->createCommand('UPDATE '.$this->_dbTables['payment'].' SET used=1 WHERE `user_id`='.$user_id)
                       ->execute();
 
             $this->addLog('Confirmed User: '.$user_id.' ('.$address.')');
@@ -49,7 +49,7 @@ class Bitcoin extends CPayment
      */
     public function exchange($summ)
     {
-        return round($summ/$this->_exchangeRate, 3);
+        return round($summ/$this->_exchangeRate, 4);
     }
     
     public function exitByError($string, $step, $id) 
@@ -102,6 +102,7 @@ class Bitcoin extends CPayment
         $curl = new Curl();
         $agent= 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
         $res = $curl->setOption(CURLOPT_SSL_VERIFYPEER, false)
+                    ->setOption(CURLOPT_FOLLOWLOCATION, false)
                     ->setOption(CURLOPT_USERAGENT, $agent)
                     ->get($url);
         
@@ -124,15 +125,14 @@ class Bitcoin extends CPayment
      */
     public function getPayments($user_id)
     {
-        $address = $this->getAddress($user_id);
-        $info = Yii::app()->db->createCommand('SELECT (SELECT FORMAT(SUM(total), 5) FROM '.$this->_dbTables['payment'].' WHERE address="'.$address.'") total,
-                                       (SELECT FORMAT(SUM(total), 5) FROM '.$this->_dbTables['payment'].' WHERE address="'.$address.'" AND used = 0 AND confirmation_amount >= ' . self::CONFIRMATION_AMOUNT . ') total_not_used')
+        $info = Yii::app()->db->createCommand('SELECT (SELECT FORMAT(SUM(total), 5) FROM '.$this->_dbTables['payment'].' WHERE user_id='.$user_id.') total,
+                                       (SELECT FORMAT(SUM(total), 5) FROM '.$this->_dbTables['payment'].' WHERE user_id='.$user_id.' AND used = 0 AND confirmation_amount >= ' . self::CONFIRMATION_AMOUNT . ') total_not_used')
                               ->queryRow(true);
         
         $info['payments'] = Yii::app()->db->createCommand()
                 ->select('*')
                 ->from($this->_dbTables['payment'])
-                ->where('address=:address', array(':address'=>$address))
+                ->where('user_id=:user_id', array(':user_id'=>$user_id))
                 ->queryAll(true);
         
         return $info;
@@ -142,6 +142,12 @@ class Bitcoin extends CPayment
     {
         $path = Yii::getPathOfAlias('application.extensions.Bitcoin.views.modal');
         include_once($path .'.php');
+    }
+    
+    public function perform($params = array())
+    {
+        header('Location: '.Yii::app()->getBaseUrl(true).'/buyPublication/PaymentResult?payment=Bitcoin');
+        Yii::app()->end();
     }
     
     /**
@@ -159,12 +165,16 @@ class Bitcoin extends CPayment
                 $data = array(
                     'total'            => $param['value'] / 100000000,
                     'address'          => $param['address'],
+                    'user_id'          => $param['user_id'],
                     'transaction_hash' => $param['transaction_hash'],
                     'confirmation_amount' => $param['confirmations'],
                     'datetime'         => new CDbExpression('NOW()'),
                 );
                 Yii::app()->db->createCommand()
                           ->insert($this->_dbTables['payment'], $data);
+                Yii::app()->db->createCommand()
+                          ->delete($this->_dbTables['address'], 'user_id=:user_id', array(':user_id'=>$param['user_id']));
+                
                 $this->addLog('Response *ok*');
                 echo '*ok*';
             } else {
@@ -203,13 +213,21 @@ class Bitcoin extends CPayment
      */
     protected function _defineRate()
     {
-        $curl = new Curl();
+        $cache_key = 'bitcoin_exchange_'.date("dmY");
+        $value = Yii::app()->cache->get($cache_key);
+        if($value === false)
+        {
+            $curl = new Curl();
 
-        $agent= 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
-        $rates = json_decode($curl->setOption(CURLOPT_SSL_VERIFYPEER, false)
-             ->setOption(CURLOPT_USERAGENT, $agent)
-             ->get($this->_exchangeURL), 1);
+            $agent= 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
+            $rates = json_decode($curl->setOption(CURLOPT_SSL_VERIFYPEER, false)
+                 ->setOption(CURLOPT_USERAGENT, $agent)
+                 ->get($this->_exchangeURL), 1);
+            $value = $rates["USD"]['buy'];
+            Yii::app()->cache->set($cache_key, $value, 24 * 60/* 24 hours*/);
+        }
+        
 
-        return $rates["USD"]['last'];
+        return $value;
     }
 }

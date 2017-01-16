@@ -49,6 +49,9 @@ return array(
             'class' => 'ext.Curl.Curl',
             'options' => array(CURLOPT_FOLLOWLOCATION => false),
         ),
+		'cache'=>array(
+			'class'=>'system.caching.CFileCache',
+		),	
         // 
         // // ...
 		// uncomment the following to enable URLs in path-format
