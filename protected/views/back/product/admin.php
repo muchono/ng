@@ -63,6 +63,12 @@ $('.search-form form').submit(function(){
             'value'=>'"$".$data->price',
             'htmlOptions' => array('width' => '40', 'align' => 'center'),
         ),
+        array(
+            'name'=>'status',
+            'value' => '$data->getStatusName()',
+            'htmlOptions' => array('width' => '10', 'align' => 'center'),
+            'filter' => Product::$statuses,
+        ),        
 		array(
 			'class'=>'CButtonColumn',
             'template' => ' {update}', 

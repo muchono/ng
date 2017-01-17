@@ -532,6 +532,7 @@ class Product extends ManyManyActiveRecord
 		$criteria->compare('title',$this->title,true);
 		$criteria->compare('price',$this->price);
 		$criteria->compare('orders',$this->orders,true);
+		$criteria->compare('status',$this->status,true);
         
         if ($this->categories) {
             $criteria->with = array( 
