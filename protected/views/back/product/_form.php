@@ -45,7 +45,7 @@
     <div class="row">
 		<?php echo $form->labelEx($model,'image'); ?>
         <?php if (!$model->isNewRecord && $model->image){?>
-            <?php echo CHtml::image($model::IMG_DIR . $model->image, '', array('id' => 'preview_img', 'width' => 210, 'height' => 150)); ?>
+            <?php echo CHtml::image($model::IMG_DIR . $model->image, '', array('id' => 'preview_img', 'width' => 180, 'height' => 140)); ?>
             <?php echo CHtml::hiddenField('del_image_marker', 0); ?>
         <br/><br/>
             
