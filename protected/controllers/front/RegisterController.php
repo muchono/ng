@@ -1,4 +1,5 @@
 <?php
+Yii::setPathOfAlias('Escopecz',Yii::getPathOfAlias('application.vendors.Escopecz'));
 
 class RegisterController extends Controller
 {
@@ -7,17 +8,14 @@ class RegisterController extends Controller
     
     public function actionSend()
     {
-        print 'HELLO';
-        /*
-        $model= User::model()->findByPk(102);
-        $url = $this->createAbsoluteUrl('register/confirm', array('code'=>$model->getRegistrationConfirmationCode(), 'id'=>$model->id));
-        $html = $this->renderPartial('_registration_email', array('url' => $url, 'user' => $model), true);
-        $text = $this->renderPartial('_registration_email_text', array('url' => $url, 'user' => $model), true);
-        */
-        print 'HELLO';
-        Yii::app()->mail->send('HTML', 'TESTX', 'Welcome to Netgeron - Email Verification', Yii::app()->params['emailNotif']['from_email'], 'mailmuchenik@gmail.com');
-        print date('h:i:s');
-        exit;
+            ini_set("display_errors","1");
+    ini_set("display_startup_errors","1");
+    ini_set("error_reporting", E_ALL);
+    
+        $mautic = new Escopecz\MauticFormSubmit\Mautic('http://mm.netgeron.com');
+        $form = $mautic->getForm(1);
+        $result = $form->submit(['email' => 'some@email.com']);
+        exit('OK');
     }
     
 	public function actionIndex()
@@ -111,6 +109,11 @@ class RegisterController extends Controller
                         $model->update();
                         $identity=new UserIdentityCustomer($model->email,'');
                         Yii::app()->user->login($identity, 0);
+                        
+                        $mautic = new Escopecz\MauticFormSubmit\Mautic('http://mm.netgeron.com');
+                        $form = $mautic->getForm(1);
+                        $form->submit(['email' => $model->email]);
+                        
                         $this->redirect(array('buyPublication/'));                           
                    } else {
                         $this->render('security',array(

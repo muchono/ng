@@ -230,14 +230,26 @@ function initAddToCart()
         if ($(this).hasClass('order')) {
             event.preventDefault();
             addToCart($(this).attr('href'), function(data){
+				trackIt();
                 location.replace('/buyPublication/SubmitDetails');
             });
         }
         if ($(this).hasClass('add')) {
             event.preventDefault();
-            addToCart($(this).attr('href'), null);
+            addToCart($(this).attr('href'), function(data){
+				trackIt();
+            });
             $(this).closest('.button-block').addClass('hide');
             $(this).closest('td').find('.added2cart').removeClass('hide');
         }
     });
+}
+
+function trackIt() {
+	  (function(w,d,t,u,n,a,m){w['MauticTrackingObject']=n;
+        w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments)},a=d.createElement(t),
+        m=d.getElementsByTagName(t)[0];a.async=1;a.src=u;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','http://mm.netgeron.com/mtc.js','mt');
+                                                                  
+	mt('send', 'pageview', {page_url: 'http://www.netgeron.com/add-to-cart/', email: USR_EMAIL});
 }

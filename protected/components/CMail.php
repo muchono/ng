@@ -23,6 +23,15 @@ class CMail extends CComponent
     function send($htmlBody, $textBody, $subject, $from, $to, $attachment = array())
     {
         $mail = new PHPMailer();
+        
+        $mail->isSMTP();
+        $mail->Host = "108.59.8.204";
+
+        $mail->SMTPAuth = true;
+
+        $mail->Username = "netgeron";
+
+        $mail->Password = "Q4JiVNrEe0b";      
 
         $mail->isHTML(true);
         //$mail->CharSet = "text/html; charset=UTF-8;";

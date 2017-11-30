@@ -3,7 +3,12 @@
  * @var $pager CPagination
  * @var $filter array
  */
+
+Yii::app()->clientScript->registerScript('user_data',"
+var USR_EMAIL = '".Yii::app()->user->profile->email."';
+",CClientScript::POS_END);
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/search.js',CClientScript::POS_END);
+
 ?>
 				<div class="container">
                     <?php $this->renderPartial('_steps', array('products'=>$products)); ?>
