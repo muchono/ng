@@ -112,7 +112,7 @@ class RegisterController extends Controller
                         
                         $mautic = new Escopecz\MauticFormSubmit\Mautic('http://mm.netgeron.com');
                         $form = $mautic->getForm(1);
-                        $form->submit(['email' => $model->email]);
+                        $form->submit(['email' => $model->email, 'username' => $model->name]);
                         
                         $this->redirect(array('buyPublication/'));                           
                    } else {
