@@ -131,5 +131,5 @@
 				</div>
 			</section>
             <?php Yii::app()->clientScript->registerScript('track_succsess_script',"
-            mt('send', 'pageview', {page_url: 'http://www.netgeron.com/purshase/'});
+            mt('send', 'pageview', {page_url: 'http://www.netgeron.com/purshase/', page_title: 'purshase'});
             ",CClientScript::POS_END);?>

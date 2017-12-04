@@ -227,17 +227,19 @@ function sortReset(category_selected)
 function initAddToCart()
 {
     $('.goods-list').on('click', '.butt', function(event){
+	var product_name = $(this).parents('tr').find('.goods-detail h2').html();
         if ($(this).hasClass('order')) {
             event.preventDefault();
+			
             addToCart($(this).attr('href'), function(data){
-				trackIt();
+				trackIt(product_name);
                 location.replace('/buyPublication/SubmitDetails');
             });
         }
         if ($(this).hasClass('add')) {
             event.preventDefault();
             addToCart($(this).attr('href'), function(data){
-				trackIt();
+				trackIt(product_name);
             });
             $(this).closest('.button-block').addClass('hide');
             $(this).closest('td').find('.added2cart').removeClass('hide');
@@ -245,6 +247,6 @@ function initAddToCart()
     });
 }
 
-function trackIt() {
-	mt('send', 'pageview', {page_url: 'http://www.netgeron.com/add-to-cart/'});
+function trackIt(name) {
+	mt('send', 'pageview', {page_url: 'http://www.netgeron.com/add-to-cart/', page_title: "add to cart - " + name});
 }
