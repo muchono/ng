@@ -358,9 +358,20 @@ class Product extends ManyManyActiveRecord
     public function beforeSave()
     {
         $this->url = trim($this->url);
+
+            $alexa_rank = $this->loadAlexaRank();
+            $google_pr = $this->loadGooglePR();
+            
+            if ($alexa_rank) {
+                $this->alexa_rank = $alexa_rank;
+            }
+            
+            if ($google_pr) {
+                $this->google_pr = $google_pr;
+            }
+            
+        
         if ($this->isNewRecord){
-            $this->alexa_rank = $this->loadAlexaRank();
-            $this->google_pr = $this->loadGooglePR();
             $this->traffic_update_date = date('Y-m-d H:i:s');
         } else {
             if(isset($this->oldAttributes['traffic']) && $this->traffic != $this->oldAttributes['traffic']){
