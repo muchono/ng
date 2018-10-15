@@ -583,8 +583,8 @@ class Product extends ManyManyActiveRecord
             $seostats->setUrl($this->url);
             $pagerank = \SEOstats\Services\Google::getPageRank();
 
-            $this->google_pr = $pagerank;
-            $this->alexa_rank = \SEOstats\Services\Alexa::getGlobalRank();
+            $this->google_pr = (int) $pagerank;
+            $this->alexa_rank = (int)  \SEOstats\Services\Alexa::getGlobalRank();
             $this->da_rank = round(\SEOstats\Services\Mozscape::getDomainAuthority(), 2);
             $this->stat_update_date = new CDbExpression('NOW()');
             $this->update();
