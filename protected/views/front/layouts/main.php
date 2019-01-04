@@ -9,8 +9,8 @@
 	<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/reset.css">
 	<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/chosen.css">
 	<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css">
-             <link rel="icon" href="http://www.netgeron.com/favicon.png" type="image/x-icon" />
-             <link rel="shortcut icon" href="http://www.netgeron.com/favicon.png" type="image/x-icon">
+             <link rel="icon" href="<?php echo Yii::app()->request->baseUrl; ?>/favicon.png" type="image/x-icon" />
+             <link rel="shortcut icon" href="<?php echo Yii::app()->request->baseUrl; ?>/favicon.png" type="image/x-icon">
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
 </head>
 <body>
