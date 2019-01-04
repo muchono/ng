@@ -56,9 +56,6 @@
 																<strong>Age of Site:</strong> <?php echo $p->old?> years
 															</li>
 															<li>
-																<strong>Google PR:</strong> <?php echo $p->google_pr?>
-															</li>
-															<li>
 																<strong>Alexa Rank:</strong> <?php echo $p->alexa_rank?>
 															</li>
 															<li>

@@ -100,6 +100,7 @@ class Order extends CActiveRecord
 
                 $task_date = $this->getIntervalDate($task_date, $this->time_interval);
                 $o2p->task_date = date('Y-m-d', $task_date);
+                $o2p->date_start = date('Y-m-d');
                 $o2p->save();
                 
                 $citem->delete();

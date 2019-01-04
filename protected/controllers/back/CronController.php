@@ -7,7 +7,8 @@ class CronController extends Controller
 	 */
 	public function actionUpdateStats()
 	{
-        Product::model()->updateStatsForGroup();
-        Yii::app()->end();
+            Product::updateStatsForGroup();
+            print date('d-m-Y H:i:s') . ' - update done' . "\n";
+            Yii::app()->end();
 	}
 }

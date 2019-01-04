@@ -14,7 +14,6 @@
  * @property string $anchor
  * @property string $status
  * @property integer $traffic
- * @property string $google_pr
  * @property string $alexa_rank
  * @property string $da_rank
  * @property string $orders
@@ -360,15 +359,15 @@ class Product extends ManyManyActiveRecord
         $this->url = trim($this->url);
 
             $alexa_rank = $this->loadAlexaRank();
-            $google_pr = $this->loadGooglePR();
+            //$google_pr = $this->loadGooglePR();
             
             if ($alexa_rank) {
                 $this->alexa_rank = $alexa_rank;
             }
-            
+            /*
             if ($google_pr) {
                 $this->google_pr = $google_pr;
-            }
+            }*/
             
         
         if ($this->isNewRecord){
@@ -581,11 +580,14 @@ class Product extends ManyManyActiveRecord
             Yii::import('application.extensions.SEOstats.Services.3rdparty.GTB_PageRank', true);
             $seostats = new \SEOstats\SEOstats;
             $seostats->setUrl($this->url);
-            $pagerank = \SEOstats\Services\Google::getPageRank();
+            //$pagerank = \SEOstats\Services\Google::getPageRank();
 
-            $this->google_pr = (int) $pagerank;
-            $this->alexa_rank = (int)  \SEOstats\Services\Alexa::getGlobalRank();
-            $this->da_rank = round(\SEOstats\Services\Mozscape::getDomainAuthority(), 2);
+            //$this->google_pr = (int) $pagerank;
+            $ar = $this->loadAlexaRank();
+            $this->alexa_rank = $ar ? $ar : $this->alexa_rank;
+            
+            $da = round(\SEOstats\Services\Mozscape::getDomainAuthority(), 2);
+            $this->da_rank = $da ? $da : $this->da_rank;
             $this->stat_update_date = new CDbExpression('NOW()');
             $this->update();
         }

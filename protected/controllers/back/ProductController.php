@@ -77,7 +77,8 @@ class ProductController extends BackEndController
         
     	// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-        
+                //print 'Rank'.$model->loadAlexaRank();
+                //exit;
 		if(isset($_POST['Product']))
 		{
             $_POST['Product']['image'] = $model->image;

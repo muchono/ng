@@ -20,7 +20,6 @@
         'data'=>$model,
         'attributes'=>array(
             'orders',
-            'google_pr',
             'alexa_rank',
             'da_rank',
             'stat_update_date',

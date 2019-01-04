@@ -30,11 +30,6 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/search.js'
 							<div id="traffic" class="slider"></div>
                             <?php echo CHtml::hiddenField('traffic', 0, array('id'=>'traffic_input'))?>
 							<hr>
-							<h3>Google PR</h3>
-							<div id="google_pr_value" class="slider-value"></div>
-							<div id="google_pr" class="slider"></div>
-                            <?php echo CHtml::hiddenField('google_pr', 0, array('id'=>'google_pr_input'))?>
-							<hr>
 							<h3>Price</h3>
 							<div id="price_value" class="slider-value"></div>
 							<div id="price" class="slider"></div>
@@ -113,7 +108,6 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/search.js'
 									<span class="butt active" id="sort_traffic">Traffic<i class="down"></i></span>                                    
                                     <?php }?>
 									<span class="butt no-active" id="sort_da">DA</span>                                    
-									<span class="butt no-active" id="sort_pr">PR</span>
 									<span class="butt no-active" id="sort_price">Price</span>
 								</div>
 							</div>

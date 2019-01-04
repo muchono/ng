@@ -7,7 +7,7 @@
 				<div class="container">
                     <?php $form=$this->beginWidget('CActiveForm', array(
                         'id'=>'forgot-password-customer',
-                        'enableAjaxValidation'=>true,
+                        'enableAjaxValidation'=>false,
                     )); ?>                    
 					<h1 class="text-center">Forgot password to Netgeron</h1>
 					<div>
