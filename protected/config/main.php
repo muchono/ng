@@ -113,4 +113,14 @@ return array(
             'sitekey' => '6LfMmQMTAAAAAKK6Uvp4m4UEfr2NCikXA6GIKTd6',
         ),
     ),
+    
+    'clientScript'=>array(
+        'packages'=>array(
+            'jquery'=>array(
+                'baseUrl'=>'https://code.jquery.com/',
+                'js'=>array('jquery-1.8.3.min.js'),
+                'coreScriptPosition'=>CClientScript::POS_HEAD
+            ),
+        ),
+    ),
 );

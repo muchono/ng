@@ -6,8 +6,8 @@ return CMap::mergeArray(
         'components'=>array(
 			'clientScript' => array(
 				'scriptMap' => array(
-					'jquery.js' => 'http://code.jquery.com/jquery-1.8.3.js',
-					'jquery.min.js' => 'http://code.jquery.com/jquery-1.8.3.min.js',
+					'jquery.js' => '//code.jquery.com/jquery-1.8.3.js',
+					'jquery.min.js' => '//code.jquery.com/jquery-1.8.3.min.js',
 				),
 			),	
             'urlManager'=>array(
