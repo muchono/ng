@@ -1,7 +1,7 @@
 <?php
 class Webmoney extends CPayment 
 {
-    protected $_action_url = 'https://merchant.webmoney.ru/lmi/payment.asp';
+    protected $_action_url = 'https://merchant.webmoney.ru/lmi/payment_utf.asp';
     /**
      *
     212.118.48.* (212.118.48.0 маска 255.255.255.0 или в unix-нотации 212.118.48.0/24)
@@ -112,9 +112,9 @@ class Webmoney extends CPayment
           <input type="hidden" name="LMI_PAYEE_PURSE" value="'.$this->_params['wmz'].'">
           <input type="hidden" name="LMI_RESULT_URL" value="'.Yii::app()->createAbsoluteUrl('BuyPublication/PaymentPreResult', array("payment"=>'Webmoney')).'">
           <input type="hidden" name="LMI_SUCCESS_URL" value="'.Yii::app()->createAbsoluteUrl('BuyPublication/PaymentResult', array("payment"=>'Webmoney')).'">
-          <input type="hidden" name="LMI_SUCCESS_METHOD" value="POST">
+          <input type="hidden" name="LMI_SUCCESS_METHOD" value="1">
           <input type="hidden" name="LMI_FAIL_URL" value="'.Yii::app()->createAbsoluteUrl('BuyPublication/PaymentResult', array("payment"=>'Webmoney')).'">
-          <input type="hidden" name="LMI_FAIL_METHOD" value="POST">
+          <input type="hidden" name="LMI_FAIL_METHOD" value="1">
           <input type="hidden" name="LMI_PAYMER_EMAIL" value="'.Yii::app()->user->profile->email.'">
           '.($this->_params['mode'] == 1 ? '<input type="hidden" name="LMI_SIM_MODE" value="0">' : '').
            '
