@@ -20,13 +20,12 @@ class CMail extends CComponent
 
     }
     
-    function send($htmlBody, $textBody, $subject, $from, $to, $attachment = array())
+    public function send($htmlBody, $textBody, $subject, $from, $to, $attachment = array())
     {
         $mail = new PHPMailer();
-
+        
         $mail->isHTML(true);
-        //$mail->CharSet = "text/html; charset=UTF-8;";
-
+        
         $mail->From = $from;
         $mail->FromName = Yii::app()->params['emailNotif']['from_name'];
         $mail->addAddress($to);
@@ -45,7 +44,41 @@ class CMail extends CComponent
         }    
     }
     
-    function send22($htmlBody, $textBody, $subject, $from, $to, $attachment = array())
+    public function sendAmazon($htmlBody, $textBody, $subject, $from, $to, $attachment = array())
+    {
+        $mail = new PHPMailer();
+
+        $mail->isSMTP();
+        $mail->Host = "email-smtp.us-west-2.amazonaws.com";
+  
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
+
+        $mail->Username = "";
+        $mail->Password = "";        
+        $mail->SMTPAuth = true;
+        
+        $mail->isHTML(true);
+        
+        $mail->From = $from;
+        $mail->FromName = Yii::app()->params['emailNotif']['from_name'];
+        $mail->addAddress($to);
+        
+        foreach($attachment as $a){
+            $mail->addAttachment($a['path'], $a['name']);
+        }
+        
+        $mail->Subject =  $subject;
+        $mail->Body =  $htmlBody; 
+        $mail->AltBody  =  $textBody;    # This automatically sets the email to multipart/alternative. This body can be read by mail clients that do not have HTML email capability such as mutt.
+
+        if(!$mail->Send())
+        {
+          throw new Exception("Mailer Error: " . $mail->ErrorInfo);
+        }
+    }
+    
+    public function send22($htmlBody, $textBody, $subject, $from, $to, $attachment = array())
     {
         $parts = array();
         

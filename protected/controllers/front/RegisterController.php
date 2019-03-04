@@ -15,7 +15,7 @@ class RegisterController extends Controller
         $text = $this->renderPartial('_registration_email_text', array('url' => $url, 'user' => $model), true);
         */
         print 'HELLO';
-        Yii::app()->mail->send('HTML', 'TESTX', 'Welcome to Netgeron - Email Verification', Yii::app()->params['emailNotif']['from_email'], 'mailmuchenik@gmail.com');
+        Yii::app()->mail->sendAmazon('HTML', 'TESTX', 'Welcome to Netgeron - Email Verification', 'info@www.netgeron.com', 'mailmuchenik@gmail.com');
         print date('h:i:s');
         exit;
     }
