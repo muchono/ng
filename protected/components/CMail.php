@@ -22,6 +22,11 @@ class CMail extends CComponent
     
     public function send($htmlBody, $textBody, $subject, $from, $to, $attachment = array())
     {
+        $this->sendAmazon($htmlBody, $textBody, $subject, $from, $to, $attachment);
+    }
+    
+    public function sendBack($htmlBody, $textBody, $subject, $from, $to, $attachment = array())
+    {
         $mail = new PHPMailer();
         
         $mail->isHTML(true);
